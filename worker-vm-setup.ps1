@@ -19,3 +19,4 @@ Restart-Computer
 # on the host for the VM, prepare the VM for nested virtualization:
 # https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/nested-virtualization
 # use: worker-vm-create.ps1
+Install-WindowsFeature -Name Hyper-V -Verbose
