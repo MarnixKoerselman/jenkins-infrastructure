@@ -14,3 +14,5 @@ Set-VMNetworkAdapter -VMName $MyHypervHostVMName -MacAddressSpoofing On
 Set-VMMemory $MyHypervHostVMName -DynamicMemoryEnabled $false -StartupBytes 4GB
 
 # the Jenkins worker VM should use the default switch, which allows access to the outside world while being protected by the  default Windows NAT
+
+# allow echo requests to test the client VM, by enabling the "echo request" firewall rules for IPv4 and v6
