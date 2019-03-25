@@ -20,7 +20,7 @@ services:
   jenkins-agent:
     container_name: jenkins-agent
     image: jenkins-agent:latest
-    restart: always
+    # restart: always
     environment:
       - 'JENKINS_URL=http://jenkins-test:8080'
     # volumes:
