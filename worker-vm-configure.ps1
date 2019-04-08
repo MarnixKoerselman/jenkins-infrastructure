@@ -2,7 +2,7 @@
 
 # allow simple (or no) password
 secedit.exe /export /cfg secconfig.cfg
-notepad secconfig.cfg # set max password age to 0 days, and 
+notepad secconfig.cfg # set passwordcomplexity=0
 secedit.exe /configure /db %windir%\securitynew.sdb /cfg secconfig.cfg /areas SECURITYPOLICY
 Remove-Item secconfig.cfg
 
