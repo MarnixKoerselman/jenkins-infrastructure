@@ -10,6 +10,10 @@ net user administrator *
 # remove Windows Defender
 Uninstall-WindowsFeature -Name Windows-Defender -Verbose
 
+# disable the firewall (TODO: finetune this to allow echo requests and Docker control, and other servies too)
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false
+
+
 # install docker on Windows Server
 Install-Module -Name DockerMsftProvider -Repository PSGallery -Force -Verbose
 Install-Package -Name Docker -ProviderName DockerMsftProvider -Force -Verbose
