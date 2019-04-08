@@ -1,8 +1,10 @@
+# this script is meant to be run inside the VM
 
 # allow simple (or no) password
 secedit.exe /export /cfg secconfig.cfg
-notepad secconfig.cfg
+notepad secconfig.cfg # set max password age to 0 days, and 
 secedit.exe /configure /db %windir%\securitynew.sdb /cfg secconfig.cfg /areas SECURITYPOLICY
+Remove-Item secconfig.cfg
 
 # change the password
 net user administrator *
@@ -10,18 +12,22 @@ net user administrator *
 # remove Windows Defender
 Uninstall-WindowsFeature -Name Windows-Defender -Verbose
 
-# disable the firewall (TODO: finetune this to allow echo requests and Docker control, and other servies too)
-Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false
-
 # if the worker VM is on a network configuration with static IP addresses (e.g. DEVOPSNAT), then set the VM's IP address:
 New-NetIPAddress -IPAddress 192.168.197.2 -DefaultGateway 192.168.197.1 -AddressFamily IPv4 -PrefixLength 24 -InterfaceAlias 'Ethernet'
-Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 192.168.197.1,8.8.8.8
+Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 8.8.8.8,192.168.197.1
 
 # install docker on Windows Server
 Install-Module -Name DockerMsftProvider -Repository PSGallery -Force -Verbose
 Install-Package -Name Docker -ProviderName DockerMsftProvider -Force -Verbose
 Invoke-WebRequest "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe" -UseBasicParsing -OutFile $Env:ProgramFiles\docker\docker-compose.exe
 Restart-Computer
+
+# if useful: enable remote management of the Docker host
+# https://docs.microsoft.com/en-us/virtualization/windowscontainers/management/manage_remotehost
+# https://hub.docker.com/r/stefanscherer/dockertls-windows/
+
+# disable the firewall (TODO: don't disable but finetune this to allow echo requests and Docker control)
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false
 
 # on the host for the VM, prepare the VM for nested virtualization:
 # https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/nested-virtualization

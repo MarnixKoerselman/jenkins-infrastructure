@@ -1,0 +1,13 @@
+Some notes to configure a VM (or bare metal) host that runs Ubuntu:
+
+Change the network configuration:
+https://linuxconfig.org/how-to-configure-static-ip-address-on-ubuntu-18-04-bionic-beaver-linux
+https://www.tecmint.com/configure-network-static-ip-address-in-ubuntu/
+
+Install docker:
+https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+e.g.:
+    $ curl -fsSL https://get.docker.com -o get-docker.sh
+    $ sudo sh get-docker.sh
+    $ sudo usermod -aG docker your-user
