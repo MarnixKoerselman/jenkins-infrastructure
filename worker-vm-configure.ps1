@@ -25,6 +25,9 @@ Restart-Computer
 # if useful: enable remote management of the Docker host
 # https://docs.microsoft.com/en-us/virtualization/windowscontainers/management/manage_remotehost
 # https://hub.docker.com/r/stefanscherer/dockertls-windows/
+# => get clone https://github.com/StefanScherer/dockerfiles-windows.git
+# => cd StefanScherer\dockerfiles-windows\dockertls
+# => docker build -t dockertls -f .\Dockerfile.1809 .
 
 # disable the firewall (TODO: don't disable but finetune this to allow echo requests and Docker control)
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false
