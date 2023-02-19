@@ -1,0 +1,37 @@
+jenkins:
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: true
+  disableRememberMe: false
+  systemMessage: "Jenkins configured automatically"
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
+  securityRealm:
+    local:
+      allowsSignup: true
+      enableCaptcha: false
+
+unclassified:
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+    - simpleBuildDiscarder:
+        discarder:
+          logRotator:
+            daysToKeepStr: "100"
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  pollSCM:
+    pollingThreadCount: 10
+
+tool:
+  dockerTool:
+    installations:
+    - name: "docker@latest"
+      properties:
+      - installSource:
+          installers:
+          - fromDocker:
+              version: "latest"

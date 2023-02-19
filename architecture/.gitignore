@@ -1,7 +1,0 @@
-*.iml
-*.bak
-structurizr-*.json
-.idea
-.gradle
-build
-out
