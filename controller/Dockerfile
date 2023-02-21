@@ -1,6 +1,11 @@
 FROM jenkins/jenkins:lts
 
 USER root
+# Keep the uncompressed war file outside jenkins_home, as this could cause confusion when moving between jenkins versions.
+RUN mkdir /var/cache/jenkins
+RUN chown -R jenkins:jenkins /var/cache/jenkins
+ENV JENKINS_OPTS="--webroot=/var/cache/jenkins/war"
+# Install docker
 RUN apt-get -y update && \
  apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common && \
  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add && \

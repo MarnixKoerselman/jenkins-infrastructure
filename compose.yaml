@@ -4,7 +4,7 @@ name: jenkins
 services:
   controller:
     # container_name: jenkins-controller
-    # hostname: jenkins-controller
+    hostname: controller
     # image: jenkins/jenkins:lts
     image: jenkins-controller
     build: controller
@@ -13,7 +13,6 @@ services:
       - "50000:50000"
     volumes:
       - controller_home:/var/jenkins_home
-      # - /usr/bin/docker:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock
       - ./controller/jobs:/var/jenkins_home/jobs
     environment:
@@ -22,6 +21,28 @@ services:
     configs:
       - source: controller_config
         target: /var/jenkins/casc/jenkins.yaml
+  nginx:
+    image: nginx:stable
+    ports:
+      - "80:80"
+      - "443:443"
+    # configs:
+    #   - source: nginx_jenkins_config
+    #     target: /var/nginx/nginx.d/
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # - ./nginx/dhparam.pem:/etc/nginx/dhparam.pem:ro
+      - ./certs/jenkins.moria.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+      - ./certs/jenkins.moria.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  # dns:
+  #   image: strm/dnsmasq
+  #   volumes:
+  #     - ./dnsmasq.conf:/etc/dnsmasq.conf
+  #   ports:
+  #     - "53:53/tcp"
+  #     - "53:53/udp"
+  #   cap_add:
+  #     - NET_ADMIN
 
 volumes:
   controller_home:
@@ -29,3 +50,5 @@ volumes:
 configs:
   controller_config:
     file: controller/jenkins.yaml
+  # nginx_jenkins_config:
+  #   file: nginx/jenkins.conf
