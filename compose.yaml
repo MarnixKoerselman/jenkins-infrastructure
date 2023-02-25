@@ -26,23 +26,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    # configs:
-    #   - source: nginx_jenkins_config
-    #     target: /var/nginx/nginx.d/
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      # - ./nginx/dhparam.pem:/etc/nginx/dhparam.pem:ro
-      - ./certs/jenkins.moria.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      - ./certs/jenkins.moria.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
-  # dns:
-  #   image: strm/dnsmasq
-  #   volumes:
-  #     - ./dnsmasq.conf:/etc/dnsmasq.conf
-  #   ports:
-  #     - "53:53/tcp"
-  #     - "53:53/udp"
-  #   cap_add:
-  #     - NET_ADMIN
+      - ./certs/wildcard.moria.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+      - ./certs/wildcard.moria.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  test:
+    image: nginx:stable
 
 volumes:
   controller_home:
@@ -50,5 +39,3 @@ volumes:
 configs:
   controller_config:
     file: controller/jenkins.yaml
-  # nginx_jenkins_config:
-  #   file: nginx/jenkins.conf
