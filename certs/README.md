@@ -1,9 +1,5 @@
 # Root CA and derived website certificates, for local/private SSL
 
-https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/
-
-https://www.linkedin.com/pulse/how-create-your-own-self-signed-root-certificate-shankar-gomare/
-
 ## Certificate Authority
 
 (if you want a non password protected key remove -des3 option)
@@ -21,3 +17,8 @@ A challenge password []:1234567890
 An optional company name []:
 
 openssl x509 -req -in wildcard.moria.local.csr -CA myCA.cer -CAkey myCA.key -CAcreateserial -out wildcard.moria.local.crt -days 20000 -sha256 -extfile wildcard.moria.local.ext
+
+## References
+
+- <https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/>
+- <https://www.linkedin.com/pulse/how-create-your-own-self-signed-root-certificate-shankar-gomare/>
