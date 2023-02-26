@@ -3,10 +3,10 @@ jenkins:
     standard:
       excludeClientIPFromCrumb: true
   disableRememberMe: false
-  systemMessage: "Jenkins configured automatically"
-  markupFormatter:
-    rawHtml:
-      disableSyntaxHighlighting: false
+  systemMessage: |
+    # Jenkins configured using Jenkins Configuration as Code
+    See <https://jenkins.moria.local/manage/configuration-as-code/>
+  markupFormatter: "markdownFormatter"
   securityRealm:
     local:
       allowsSignup: true
@@ -37,4 +37,4 @@ tool:
               version: "latest"
 
 jobs:
-  - file: /usr/share/jenkins/dsl/jobDslRunner.groovy
+  - file: /usr/share/jenkins/dsl/jenkinsfiles.groovy

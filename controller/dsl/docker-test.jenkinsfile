@@ -1,0 +1,12 @@
+pipeline {
+    agent {
+        node 'built-in'
+    }
+    stages {
+        stage('docker info') {
+            steps {
+                sh 'docker info'
+            }
+        }
+    }
+}
