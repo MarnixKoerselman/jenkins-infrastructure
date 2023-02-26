@@ -35,3 +35,6 @@ tool:
           installers:
           - fromDocker:
               version: "latest"
+
+jobs:
+  - file: /usr/share/jenkins/dsl/jobDslRunner.groovy

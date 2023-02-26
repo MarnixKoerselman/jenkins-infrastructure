@@ -1,5 +1,4 @@
-controller/jobs/docker test/builds/
-controller/jobs/docker test/nextBuildNumber
+controller/jobs/
 certs/*.cer
 certs/*.key
 certs/*.crt
