@@ -11,6 +11,11 @@ jenkins:
     local:
       allowsSignup: true
       enableCaptcha: false
+      users:
+        - id: "${JENKINS_ADMINISTRATOR_USERNAME:-admin}"
+          password: "${JENKINS_ADMINISTRATOR_PASSWORD:-jcasc}"
+        - id: "${JENKINS_SWARM_USER}"
+          password: "${JENKINS_SWARM_PASSWORD:-swarm}"
 
 unclassified:
   buildDiscarders:
@@ -20,11 +25,6 @@ unclassified:
         discarder:
           logRotator:
             daysToKeepStr: "100"
-  fingerprints:
-    fingerprintCleanupDisabled: false
-    storage: "file"
-  pollSCM:
-    pollingThreadCount: 10
 
 tool:
   dockerTool:

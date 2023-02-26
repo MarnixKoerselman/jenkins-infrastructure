@@ -10,7 +10,7 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - controller_home:/var/jenkins_home:rw
+      - controller_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # - ./controller/jobs:/var/jenkins_home/jobs
       - ./controller/dsl:/usr/share/jenkins/dsl:ro
@@ -20,6 +20,11 @@ services:
     configs:
       - source: controller_config
         target: /var/jenkins/casc/jenkins.yaml
+    secrets:
+      - JENKINS_ADMINISTRATOR_USERNAME
+      - JENKINS_ADMINISTRATOR_PASSWORD
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
   nginx: # reverse proxy
     image: nginx:stable
     ports:
@@ -38,3 +43,13 @@ volumes:
 configs:
   controller_config:
     file: controller/jenkins.yaml
+
+secrets:
+  JENKINS_ADMINISTRATOR_USERNAME:
+    file: ./secrets/admin-user
+  JENKINS_ADMINISTRATOR_PASSWORD:
+    file: ./secrets/admin-password
+  JENKINS_SWARM_USER:
+    file: ./secrets/swarm-user
+  JENKINS_SWARM_PASSWORD:
+    file: ./secrets/swarm-password
