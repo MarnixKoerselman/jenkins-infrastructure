@@ -18,7 +18,7 @@ RUN
 #  ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 # USER jenkins <= won't work with permissions on docker.sock
 
-RUN jenkins-plugin-cli --plugins credentials-binding configuration-as-code job-dsl markdown-formatter swarm docker-workflow ws-cleanup pipeline-stage-view pipeline-graph-view pipeline-utility-steps
-# blueocean ssh-slaves git workflow-aggregator  matrix-auth antisamy-markup-formatter
+RUN jenkins-plugin-cli --plugins credentials-binding configuration-as-code job-dsl markdown-formatter swarm docker-workflow ws-cleanup pipeline-stage-view pipeline-graph-view pipeline-utility-steps matrix-auth
+# blueocean ssh-slaves git workflow-aggregator antisamy-markup-formatter
 
 COPY --chown=jenkins:jenkins dsl /usr/share/jenkins/dsl

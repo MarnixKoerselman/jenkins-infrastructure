@@ -9,13 +9,23 @@ jenkins:
   markupFormatter: "markdownFormatter"
   securityRealm:
     local:
-      allowsSignup: true
+      allowsSignup: false
       enableCaptcha: false
       users:
         - id: "${JENKINS_ADMINISTRATOR_USERNAME:-admin}"
           password: "${JENKINS_ADMINISTRATOR_PASSWORD:-jcasc}"
         - id: "${JENKINS_SWARM_USER}"
           password: "${JENKINS_SWARM_PASSWORD:-swarm}"
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+      - "USER:Agent/Connect:${JENKINS_SWARM_USER}"
+      - "USER:Agent/Disconnect:${JENKINS_SWARM_USER}"
+      - "USER:Agent/Create:${JENKINS_SWARM_USER}"
+      # - "USER:Agent/Delete:anonymous"
+      # - "USER:Overall/Read:anonymous"     # needed for anonymously connecting a swarm agent
+      - "GROUP:Overall/Administer:authenticated"
+      - "USER:Overall/Administer:${JENKINS_ADMINISTRATOR_USERNAME}"
 
 unclassified:
   buildDiscarders:
@@ -25,6 +35,9 @@ unclassified:
         discarder:
           logRotator:
             daysToKeepStr: "100"
+  location:
+    adminAddress: "nobody@nowhere"
+    url: "${JENKINS_URL_CASC}"
 
 tool:
   dockerTool:
