@@ -4,7 +4,6 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = *.moria.local
+DNS.1 = *.test.local
 DNS.2 = localhost
-# this doesn't work -
-IP.1 = 192.168.1.10
+#IP.1 = 192.168.1.10

@@ -1,5 +1,5 @@
-controller/jobs/
 certs/*.cer
 certs/*.key
 certs/*.crt
 certs/*.csr
+.env

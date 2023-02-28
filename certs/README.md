@@ -10,13 +10,13 @@ openssl req -x509 -new -nodes -key myCA.key -sha256 -days 20000 -out myCA.cer
 
 ## Website
 
-openssl genrsa -out wildcard.moria.local.key 2048
+openssl genrsa -out wildcard.test.local.key 2048
 
-openssl req -new -key wildcard.moria.local.key -out wildcard.moria.local.csr
+openssl req -new -key wildcard.test.local.key -out wildcard.test.local.csr
 A challenge password []:1234567890
 An optional company name []:
 
-openssl x509 -req -in wildcard.moria.local.csr -CA myCA.cer -CAkey myCA.key -CAcreateserial -out wildcard.moria.local.crt -days 20000 -sha256 -extfile wildcard.moria.local.ext
+openssl x509 -req -in wildcard.test.local.csr -CA myCA.cer -CAkey myCA.key -CAcreateserial -out wildcard.test.local.crt -days 20000 -sha256 -extfile wildcard.test.local.ext
 
 ## References
 

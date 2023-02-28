@@ -6,17 +6,15 @@ services:
     hostname: controller
     image: jenkins-controller
     build: controller
-    ports:
-      - "8080:8080"
-      - "50000:50000"
     volumes:
       - controller_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./controller/dsl:/usr/share/jenkins/dsl:ro
     environment:
+      - TZ=Europe/CET
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - CASC_JENKINS_CONFIG=/var/jenkins/casc/jenkins.yaml
-    env_file: ./controller/controller.env
+      - JENKINS_URL_CASC=${JENKINS_URL_CASC:-https://localhost} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
     configs:
       - source: controller_config
         target: /var/jenkins/casc/jenkins.yaml
@@ -25,6 +23,7 @@ services:
       - JENKINS_ADMINISTRATOR_PASSWORD
       - JENKINS_SWARM_USER
       - JENKINS_SWARM_PASSWORD
+      - SSH_AGENT_PRIVATE_KEY
   nginx: # reverse proxy
     image: nginx:stable
     ports:
@@ -32,10 +31,15 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certs/wildcard.moria.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      - ./certs/wildcard.moria.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+      - ./certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+      - ./certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
+  ssh-agent:
+    image: jenkins/ssh-agent
+    environment:
+      # copied from ssh_agent_id_rsa.pub:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwKes1/GDeW6D1q3RQPIcriY/ZqiCvLNkFb5Y7O7VDJpGFZ0nqRji+71fdjQxVnU5HFwiMCtj00oWRIYZ0zwFX7mPTF2jmiaeX2TOCuo0dT3dIKx5tyR1YANkPGql6n5VBoBOKiBeNKLOYMi7THjwVlDgU6lWdsEPmM4XLEwCDFMv7ofkI346kDS3d3odI3xSUqdaYVD/6NHPq3uBlk+jzrfxzeAyXc2I8TUw8TQ8ppx0Igf0SM8HcJ+29iCPFcmI1n53RSreYaYIdhpk6mzeqHsEUn2FMCvi0yYKm3lw2/PZ8pvtecV89HpDojbG27IwpPwOD+ESojP+kVrpukuwn marnix@Aragorn
 
 volumes:
   controller_home:
@@ -46,10 +50,12 @@ configs:
 
 secrets:
   JENKINS_ADMINISTRATOR_USERNAME:
-    file: ./secrets/admin-user
+    file: ./example-secrets/admin-user
   JENKINS_ADMINISTRATOR_PASSWORD:
-    file: ./secrets/admin-password
+    file: ./example-secrets/admin-password
   JENKINS_SWARM_USER:
-    file: ./secrets/swarm-user
+    file: ./example-secrets/swarm-user
   JENKINS_SWARM_PASSWORD:
-    file: ./secrets/swarm-password
+    file: ./example-secrets/swarm-password
+  SSH_AGENT_PRIVATE_KEY:
+    file: ./example-secrets/ssh_agent_id_rsa

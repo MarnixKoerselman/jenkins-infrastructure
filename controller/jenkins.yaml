@@ -5,7 +5,7 @@ jenkins:
   disableRememberMe: false
   systemMessage: |
     # Jenkins configured using Jenkins Configuration as Code
-    See <https://jenkins.moria.local/manage/configuration-as-code/>
+    See <https://jenkins.test.local/manage/configuration-as-code/>
   markupFormatter: "markdownFormatter"
   securityRealm:
     local:
@@ -19,22 +19,36 @@ jenkins:
   authorizationStrategy:
     globalMatrix:
       permissions:
-      - "USER:Agent/Connect:${JENKINS_SWARM_USER}"
-      - "USER:Agent/Disconnect:${JENKINS_SWARM_USER}"
-      - "USER:Agent/Create:${JENKINS_SWARM_USER}"
-      # - "USER:Agent/Delete:anonymous"
-      # - "USER:Overall/Read:anonymous"     # needed for anonymously connecting a swarm agent
-      - "GROUP:Overall/Administer:authenticated"
-      - "USER:Overall/Administer:${JENKINS_ADMINISTRATOR_USERNAME}"
+        - "USER:Agent/Connect:${JENKINS_SWARM_USER}"
+        - "USER:Agent/Disconnect:${JENKINS_SWARM_USER}"
+        - "USER:Agent/Create:${JENKINS_SWARM_USER}"
+        # - "USER:Agent/Delete:anonymous"
+        # - "USER:Overall/Read:anonymous"     # needed for anonymously connecting a swarm agent
+        - "GROUP:Overall/Administer:authenticated"
+        - "USER:Overall/Administer:${JENKINS_ADMINISTRATOR_USERNAME}"
+  nodes:
+    - permanent:
+        labelString: "linux"
+        launcher:
+          ssh:
+            credentialsId: "ssh-agent-key"
+            host: "ssh-agent"
+            port: 22
+            sshHostKeyVerificationStrategy:
+              manuallyTrustedKeyVerificationStrategy:
+                requireInitialManualTrust: false
+        name: "ssh-agent"
+        remoteFS: "/home/jenkins/agent"
+        retentionStrategy: "always"
 
 unclassified:
   buildDiscarders:
     configuredBuildDiscarders:
-    - "jobBuildDiscarder"
-    - simpleBuildDiscarder:
-        discarder:
-          logRotator:
-            daysToKeepStr: "100"
+      - "jobBuildDiscarder"
+      - simpleBuildDiscarder:
+          discarder:
+            logRotator:
+              daysToKeepStr: "100"
   location:
     adminAddress: "nobody@nowhere"
     url: "${JENKINS_URL_CASC}"
@@ -42,12 +56,27 @@ unclassified:
 tool:
   dockerTool:
     installations:
-    - name: "docker@latest"
-      properties:
-      - installSource:
-          installers:
-          - fromDocker:
-              version: "latest"
+      - name: "docker@latest"
+        properties:
+          - installSource:
+              installers:
+                - fromDocker:
+                    version: "latest"
 
 jobs:
   - file: /usr/share/jenkins/dsl/jenkinsfiles.groovy
+
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          scope: SYSTEM
+          id: ssh-agent-key
+          username: jenkins  # defined in docker image jenkins/ssh-agent:*
+          usernameSecret: true
+          passphrase: ""
+          # description: "ssh key used to connect ssh agents"
+          privateKeySource:
+            directEntry:
+              privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in compose.yml
