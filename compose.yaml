@@ -39,7 +39,7 @@ services:
     image: jenkins/ssh-agent
     environment:
       # copied from ssh_agent_id_rsa.pub:
-      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwKes1/GDeW6D1q3RQPIcriY/ZqiCvLNkFb5Y7O7VDJpGFZ0nqRji+71fdjQxVnU5HFwiMCtj00oWRIYZ0zwFX7mPTF2jmiaeX2TOCuo0dT3dIKx5tyR1YANkPGql6n5VBoBOKiBeNKLOYMi7THjwVlDgU6lWdsEPmM4XLEwCDFMv7ofkI346kDS3d3odI3xSUqdaYVD/6NHPq3uBlk+jzrfxzeAyXc2I8TUw8TQ8ppx0Igf0SM8HcJ+29iCPFcmI1n53RSreYaYIdhpk6mzeqHsEUn2FMCvi0yYKm3lw2/PZ8pvtecV89HpDojbG27IwpPwOD+ESojP+kVrpukuwn marnix@Aragorn
+      JENKINS_AGENT_SSH_PUBKEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwKes1/GDeW6D1q3RQPIcriY/ZqiCvLNkFb5Y7O7VDJpGFZ0nqRji+71fdjQxVnU5HFwiMCtj00oWRIYZ0zwFX7mPTF2jmiaeX2TOCuo0dT3dIKx5tyR1YANkPGql6n5VBoBOKiBeNKLOYMi7THjwVlDgU6lWdsEPmM4XLEwCDFMv7ofkI346kDS3d3odI3xSUqdaYVD/6NHPq3uBlk+jzrfxzeAyXc2I8TUw8TQ8ppx0Igf0SM8HcJ+29iCPFcmI1n53RSreYaYIdhpk6mzeqHsEUn2FMCvi0yYKm3lw2/PZ8pvtecV89HpDojbG27IwpPwOD+ESojP+kVrpukuwn jenkins@jenkins
 
 volumes:
   controller_home:
