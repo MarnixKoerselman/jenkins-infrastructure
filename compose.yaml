@@ -7,32 +7,32 @@ services:
     image: jenkins-controller
     build: controller
     volumes:
-      - controller_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./controller/dsl:/usr/share/jenkins/dsl:ro
+    - controller_home:/var/jenkins_home
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - ./controller/dsl:/usr/share/jenkins/dsl:ro
     environment:
-      - TZ=Europe/CET
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-      - CASC_JENKINS_CONFIG=/var/jenkins/casc/jenkins.yaml
-      - JENKINS_URL_CASC=${JENKINS_URL_CASC:-https://localhost} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
+      CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://localhost} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
+      TZ: Europe/CET
     configs:
-      - source: controller_config
-        target: /var/jenkins/casc/jenkins.yaml
+    - source: controller_config
+      target: /var/jenkins/casc/jenkins.yaml
     secrets:
-      - JENKINS_ADMINISTRATOR_USERNAME
-      - JENKINS_ADMINISTRATOR_PASSWORD
-      - JENKINS_SWARM_USER
-      - JENKINS_SWARM_PASSWORD
-      - SSH_AGENT_PRIVATE_KEY
+    - JENKINS_ADMINISTRATOR_USERNAME
+    - JENKINS_ADMINISTRATOR_PASSWORD
+    - JENKINS_SWARM_USER
+    - JENKINS_SWARM_PASSWORD
+    - SSH_AGENT_PRIVATE_KEY
   nginx: # reverse proxy
     image: nginx:stable
     ports:
-      - "80:80"
-      - "443:443"
+    - "80:80"
+    - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      - ./certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+    - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    - ./certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+    - ./certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
   ssh-agent:
