@@ -1,4 +1,5 @@
 // println 'all files:'
+/* groovylint-disable-next-line CompileStatic, JavaIoPackageAccess */
 new File('/usr/share/jenkins/dsl').eachFile { file ->
     // println file
     if (file.name.endsWith('.jenkinsfile')) {
@@ -8,7 +9,7 @@ new File('/usr/share/jenkins/dsl').eachFile { file ->
     }
 }
 
-def generatePipelineJob(String pipelineName, String pipelineScript) {
+void generatePipelineJob(String pipelineName, String pipelineScript) {
     pipelineJob(pipelineName) {
         definition {
             cps {
