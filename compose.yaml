@@ -13,10 +13,10 @@ services:
     environment:
       CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
-      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://localhost} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
+      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.test.local} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
       TZ: Europe/CET
     configs:
-    - source: controller_config
+    - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use the just jenkins base image
       target: /var/jenkins/casc/jenkins.yaml
     secrets:
     - JENKINS_ADMINISTRATOR_USERNAME
@@ -40,12 +40,21 @@ services:
     environment:
       # copied from ssh_agent_id_rsa.pub:
       JENKINS_AGENT_SSH_PUBKEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwKes1/GDeW6D1q3RQPIcriY/ZqiCvLNkFb5Y7O7VDJpGFZ0nqRji+71fdjQxVnU5HFwiMCtj00oWRIYZ0zwFX7mPTF2jmiaeX2TOCuo0dT3dIKx5tyR1YANkPGql6n5VBoBOKiBeNKLOYMi7THjwVlDgU6lWdsEPmM4XLEwCDFMv7ofkI346kDS3d3odI3xSUqdaYVD/6NHPq3uBlk+jzrfxzeAyXc2I8TUw8TQ8ppx0Igf0SM8HcJ+29iCPFcmI1n53RSreYaYIdhpk6mzeqHsEUn2FMCvi0yYKm3lw2/PZ8pvtecV89HpDojbG27IwpPwOD+ESojP+kVrpukuwn jenkins@jenkins
+  swarm-agent:
+    hostname: swarm-agent
+    image: jenkins-swarm-agent
+    build:
+      context: swarm-agent
+      dockerfile: Dockerfile
+    secrets:
+    - JENKINS_SWARM_USER
+    - JENKINS_SWARM_PASSWORD
 
 volumes:
   controller_home:
 
 configs:
-  controller_config:
+  casc:
     file: controller/jenkins.yaml
 
 secrets:
