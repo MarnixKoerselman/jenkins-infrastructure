@@ -24,15 +24,15 @@ services:
     - JENKINS_SWARM_USER
     - JENKINS_SWARM_PASSWORD
     - SSH_AGENT_PRIVATE_KEY
-  nginx: # reverse proxy
+  reverse-proxy:
     image: nginx:stable
     ports:
     - "80:80"
     - "443:443"
     volumes:
-    - ./nginx/conf.d:/etc/nginx/conf.d:ro
-    - ./certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-    - ./certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+    - ./reverse-proxy/conf.d:/etc/nginx/conf.d:ro
+    - ./reverse-proxy/certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+    - ./reverse-proxy/certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
   ssh-agent:
