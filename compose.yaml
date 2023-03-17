@@ -7,32 +7,32 @@ services:
     image: jenkins-controller
     build: controller
     volumes:
-    - controller_home:/var/jenkins_home
-    - /var/run/docker.sock:/var/run/docker.sock:ro
-    - ./controller/dsl:/usr/share/jenkins/dsl:ro
+      - controller_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./controller/dsl:/usr/share/jenkins/dsl:ro
     environment:
       CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
       JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.test.local} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
       TZ: Europe/CET
     configs:
-    - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use the just jenkins base image
-      target: /var/jenkins/casc/jenkins.yaml
+      - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use just the jenkins base image
+        target: /var/jenkins/casc/jenkins.yaml
     secrets:
-    - JENKINS_ADMINISTRATOR_USERNAME
-    - JENKINS_ADMINISTRATOR_PASSWORD
-    - JENKINS_SWARM_USER
-    - JENKINS_SWARM_PASSWORD
-    - SSH_AGENT_PRIVATE_KEY
+      - JENKINS_ADMINISTRATOR_USERNAME
+      - JENKINS_ADMINISTRATOR_PASSWORD
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
+      - SSH_AGENT_PRIVATE_KEY
   reverse-proxy:
     image: nginx:stable
     ports:
-    - "80:80"
-    - "443:443"
+      - "80:80"
+      - "443:443"
     volumes:
-    - ./reverse-proxy/conf.d:/etc/nginx/conf.d:ro
-    - ./reverse-proxy/certs/wildcard.test.local.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-    - ./reverse-proxy/certs/wildcard.test.local.key:/etc/ssl/private/nginx-selfsigned.key:ro
+      - ./reverse-proxy/conf.d:/etc/nginx/conf.d:ro
+      - ./reverse-proxy/certs/wildcard.test.local.crt:/etc/ssl/certs/wildcard.test.local.crt:ro
+      - ./reverse-proxy/certs/wildcard.test.local.key:/etc/ssl/private/wildcard.test.local.key:ro
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
   ssh-agent:
@@ -47,8 +47,8 @@ services:
       context: swarm-agent
       dockerfile: Dockerfile
     secrets:
-    - JENKINS_SWARM_USER
-    - JENKINS_SWARM_PASSWORD
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
 
 volumes:
   controller_home:
