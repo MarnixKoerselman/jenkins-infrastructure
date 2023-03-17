@@ -7,9 +7,17 @@ services:
     image: jenkins-controller
     build: controller
     volumes:
-      - controller_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./controller/dsl:/usr/share/jenkins/dsl:ro
+      - type: volume
+        source: controller_home
+        target: /var/jenkins_home
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./controller/dsl
+        target: /usr/share/jenkins/dsl
+        read_only: true
     environment:
       CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
@@ -24,22 +32,39 @@ services:
       - JENKINS_SWARM_USER
       - JENKINS_SWARM_PASSWORD
       - SSH_AGENT_PRIVATE_KEY
+    ports:
+      - "50000:50000"
+
   reverse-proxy:
     image: nginx:stable
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./reverse-proxy/conf.d:/etc/nginx/conf.d:ro
-      - ./reverse-proxy/certs/wildcard.test.local.crt:/etc/ssl/certs/wildcard.test.local.crt:ro
-      - ./reverse-proxy/certs/wildcard.test.local.key:/etc/ssl/private/wildcard.test.local.key:ro
+      - type: bind
+        source: ./reverse-proxy/conf.d
+        target: /etc/nginx/conf.d
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.test.local.crt
+        target: /etc/ssl/certs/wildcard.test.local.crt
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.test.local.key
+        target: /etc/ssl/private/wildcard.test.local.key
+        read_only: true
+
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
+
   ssh-agent:
     image: jenkins/ssh-agent
-    environment:
-      # copied from ssh_agent_id_rsa.pub:
-      JENKINS_AGENT_SSH_PUBKEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwKes1/GDeW6D1q3RQPIcriY/ZqiCvLNkFb5Y7O7VDJpGFZ0nqRji+71fdjQxVnU5HFwiMCtj00oWRIYZ0zwFX7mPTF2jmiaeX2TOCuo0dT3dIKx5tyR1YANkPGql6n5VBoBOKiBeNKLOYMi7THjwVlDgU6lWdsEPmM4XLEwCDFMv7ofkI346kDS3d3odI3xSUqdaYVD/6NHPq3uBlk+jzrfxzeAyXc2I8TUw8TQ8ppx0Igf0SM8HcJ+29iCPFcmI1n53RSreYaYIdhpk6mzeqHsEUn2FMCvi0yYKm3lw2/PZ8pvtecV89HpDojbG27IwpPwOD+ESojP+kVrpukuwn jenkins@jenkins
+    env_file: example-secrets/ssh-agent.env
+
   swarm-agent:
     hostname: swarm-agent
     image: jenkins-swarm-agent
