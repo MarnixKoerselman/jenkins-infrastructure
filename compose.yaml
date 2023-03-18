@@ -34,6 +34,11 @@ services:
       - SSH_AGENT_PRIVATE_KEY
     ports:
       - "50000:50000"
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
   reverse-proxy:
     image: nginx:stable
@@ -53,17 +58,29 @@ services:
         source: ./reverse-proxy/certs/wildcard.test.local.key
         target: /etc/ssl/private/wildcard.test.local.key
         read_only: true
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
   test: # 'dummy' website to test the nginx configuration for multiple websites
     image: nginx:stable
     deploy:
-      mode: replicated
-      replicas: 2
-      endpoint_mode: vip
+      mode: global
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
   ssh-agent:
     image: jenkins/ssh-agent
     env_file: example-secrets/ssh-agent.env
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
   swarm-agent:
     hostname: swarm-agent
@@ -76,6 +93,12 @@ services:
     secrets:
       - JENKINS_SWARM_USER
       - JENKINS_SWARM_PASSWORD
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
 volumes:
   controller_home:

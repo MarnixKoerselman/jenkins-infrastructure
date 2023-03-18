@@ -11,7 +11,7 @@ JENKINS_SWARM_PASSWORD=`cat /run/secrets/JENKINS_SWARM_PASSWORD`
 while true
 do
 wget $JENKINS_URL/swarm/swarm-client.jar -O /swarm-client.jar
-java -jar /swarm-client.jar -executors 1 -url $JENKINS_URL -username $JENKINS_SWARM_USER -password $JENKINS_SWARM_PASSWORD -deleteExistingClients -disableClientsUniqueId -executors 1 -labels "linux ubuntu-20.04"
+java -jar /swarm-client.jar -executors 1 -url $JENKINS_URL -username $JENKINS_SWARM_USER -password $JENKINS_SWARM_PASSWORD -executors 1 -labels "linux ubuntu-22.04"
 echo "sleep and retry, swarm-client exit code: $?"
 sleep 10
 done
