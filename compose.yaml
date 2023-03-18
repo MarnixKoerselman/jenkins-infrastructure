@@ -32,6 +32,7 @@ services:
       - JENKINS_SWARM_USER
       - JENKINS_SWARM_PASSWORD
       - SSH_AGENT_PRIVATE_KEY
+      - GITHUB_PAT
     ports:
       - "50000:50000"
     deploy:
@@ -118,3 +119,5 @@ secrets:
     file: ./example-secrets/swarm-password
   SSH_AGENT_PRIVATE_KEY:
     file: ./example-secrets/ssh_agent_id_rsa
+  GITHUB_PAT:
+    file: ./example-secrets/MarnixKoerselman-public-access-token
