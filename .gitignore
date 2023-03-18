@@ -1,3 +1,6 @@
 secrets/
 .env
 compose.override.yaml
+windows-agent/swarm-client.jar
+windows-agent/remoting/
+windows-agent/workspace/
