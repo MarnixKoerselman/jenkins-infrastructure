@@ -1,5 +1,4 @@
 // println 'all files:'
-/* groovylint-disable-next-line CompileStatic, JavaIoPackageAccess */
 new File('/usr/share/jenkins/dsl').eachFile { file ->
     // println file
     if (file.name.endsWith('.jenkinsfile')) {

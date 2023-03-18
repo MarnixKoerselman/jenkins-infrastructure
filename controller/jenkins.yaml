@@ -41,6 +41,16 @@ jenkins:
         remoteFS: "/home/jenkins/agent"
         retentionStrategy: "always"
 
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  queueItemAuthenticator:
+    authenticators:
+      - global:
+          strategy: "triggeringUsersAuthorizationStrategy"
+
 unclassified:
   buildDiscarders:
     configuredBuildDiscarders:
@@ -65,18 +75,19 @@ tool:
 
 jobs:
   - file: /usr/share/jenkins/dsl/jenkinsfiles.groovy
+  - file: /usr/share/jenkins/dsl/dsl-playground.groovy
 
 credentials:
   system:
     domainCredentials:
-    - credentials:
-      - basicSSHUserPrivateKey:
-          scope: SYSTEM
-          id: ssh-agent-key
-          username: jenkins  # defined in docker image jenkins/ssh-agent:*
-          usernameSecret: true
-          passphrase: ""
-          # description: "ssh key used to connect ssh agents"
-          privateKeySource:
-            directEntry:
-              privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in compose.yml
+      - credentials:
+          - basicSSHUserPrivateKey:
+              scope: SYSTEM
+              id: ssh-agent-key
+              username: jenkins # defined in docker image jenkins/ssh-agent:*
+              usernameSecret: true
+              passphrase: ""
+              # description: "ssh key used to connect ssh agents"
+              privateKeySource:
+                directEntry:
+                  privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in compose.yml
