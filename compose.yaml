@@ -72,7 +72,7 @@ services:
       context: swarm-agent
       dockerfile: Dockerfile
     environment:
-      - JEKINS_URL=http://controller:8080
+      - JENKINS_URL=http://controller:8080
     secrets:
       - JENKINS_SWARM_USER
       - JENKINS_SWARM_PASSWORD
