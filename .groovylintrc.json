@@ -9,6 +9,9 @@
         },
         "LineLength": {
             "enabled": false
+        },
+        "NestedBlockDepth": {
+            "enabled": false
         }
     }
 }

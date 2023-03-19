@@ -82,6 +82,12 @@ services:
         condition: unless-stopped
         delay: 5s
         window: 120s
+    volumes:
+      - type: bind
+        # potential docker machine
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
 
   swarm-agent:
     hostname: swarm-agent
@@ -100,6 +106,12 @@ services:
         condition: unless-stopped
         delay: 5s
         window: 120s
+    volumes:
+      - type: bind
+        # potential docker machine
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
 
 volumes:
   controller_home:

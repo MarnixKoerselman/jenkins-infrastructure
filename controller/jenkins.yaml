@@ -40,6 +40,8 @@ jenkins:
         name: "ssh-agent"
         remoteFS: "/home/jenkins/agent"
         retentionStrategy: "always"
+  labelString: "linux docker"
+  numExecutors: 1
 
 security:
   apiToken:
@@ -69,11 +71,27 @@ tool:
   dockerTool:
     installations:
       - name: "docker@latest"
+        # Works only on Linux, unfortunately!
         properties:
           - installSource:
               installers:
                 - fromDocker:
                     version: "latest"
+  git:
+    installations:
+      - home: "git"
+        name: "Default"
+        properties:
+          - installSource:
+              installers:
+                - zip:
+                    label: "windows && x64"
+                    subdir: "cmd\\git.exe"
+                    url: "https://github.com/git-for-windows/git/releases/download/v2.40.0.windows.1/MinGit-2.40.0-64-bit.zip"
+                - zip:
+                    label: "windows && x86"
+                    subdir: "cmd\\git.exe"
+                    url: "https://github.com/git-for-windows/git/releases/download/v2.40.0.windows.1/MinGit-2.40.0-32-bit.zip"
 
 jobs:
   - file: /usr/share/jenkins/dsl/jenkinsfiles.groovy
