@@ -1,0 +1,28 @@
+pipeline {
+    agent none
+    stages {
+        stage('busybox') {
+            agent {
+                docker {
+                    image 'busybox:stable'
+                    args '-p 3000:3000 -p 5000:5000'
+                    label 'linux && docker'
+                }
+            }
+            steps {
+                sh 'ls -al'
+            }
+        }
+        stage('nanoserver') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/windows/nanoserver:ltsc2019'
+                    label 'windows && docker'
+                }
+            }
+            steps {
+                bat 'dir'
+            }
+        }
+    }
+}

@@ -1,0 +1,135 @@
+# version: '3.9'
+
+name: jenkins
+services:
+  controller:
+    hostname: controller
+    image: jenkins-controller
+    build: controller
+    volumes:
+      - type: volume
+        source: controller_home
+        target: /var/jenkins_home
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./controller/dsl
+        target: /usr/share/jenkins/dsl
+        read_only: true
+    environment:
+      CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.test.local} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
+      TZ: Europe/CET
+    configs:
+      - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use just the jenkins base image
+        target: /var/jenkins/casc/jenkins.yaml
+    secrets:
+      - JENKINS_ADMINISTRATOR_USERNAME
+      - JENKINS_ADMINISTRATOR_PASSWORD
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
+      - SSH_AGENT_PRIVATE_KEY
+      - GITHUB_PAT
+    ports:
+      - "50000:50000"
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
+
+  reverse-proxy:
+    image: nginx:stable
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - type: bind
+        source: ./reverse-proxy/conf.d
+        target: /etc/nginx/conf.d
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.test.local.crt
+        target: /etc/ssl/certs/wildcard.test.local.crt
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.test.local.key
+        target: /etc/ssl/private/wildcard.test.local.key
+        read_only: true
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
+
+  test: # 'dummy' website to test the nginx configuration for multiple websites
+    image: nginx:stable
+    deploy:
+      mode: global
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
+
+  ssh-agent:
+    image: jenkins/ssh-agent
+    env_file: example-secrets/ssh-agent.env
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
+    volumes:
+      - type: bind
+        # potential docker machine
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+
+  swarm-agent:
+    hostname: swarm-agent
+    image: jenkins-swarm-agent
+    build:
+      context: swarm-agent
+      dockerfile: Dockerfile
+    environment:
+      - JENKINS_URL=http://controller:8080
+    secrets:
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
+    volumes:
+      - type: bind
+        # potential docker machine
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+
+volumes:
+  controller_home:
+
+configs:
+  casc:
+    file: controller/jenkins.yaml
+
+secrets:
+  JENKINS_ADMINISTRATOR_USERNAME:
+    file: ./example-secrets/admin-user
+  JENKINS_ADMINISTRATOR_PASSWORD:
+    file: ./example-secrets/admin-password
+  JENKINS_SWARM_USER:
+    file: ./example-secrets/swarm-user
+  JENKINS_SWARM_PASSWORD:
+    file: ./example-secrets/swarm-password
+  SSH_AGENT_PRIVATE_KEY:
+    file: ./example-secrets/ssh_agent_id_rsa
+  GITHUB_PAT:
+    file: ./example-secrets/MarnixKoerselman-public-access-token
