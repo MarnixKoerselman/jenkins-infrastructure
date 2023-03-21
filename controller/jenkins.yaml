@@ -112,9 +112,9 @@ credentials:
               privateKeySource:
                 directEntry:
                   privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in compose.yml
-          - usernamePassword:
-              id: "github-credentials"
-              password: "${GITHUB_PAT}"
-              scope: GLOBAL
-              username: "MarnixKoerselman"
-              usernameSecret: true
+          # - usernamePassword:
+          #     id: "github-credentials"
+          #     password: "${GITHUB_PAT}"
+          #     scope: GLOBAL
+          #     username: "${GITHUB_SLUG}"
+          #     usernameSecret: true

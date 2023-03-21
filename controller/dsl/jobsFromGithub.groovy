@@ -11,7 +11,7 @@ organizationFolder(githubRepoOwner) {
             }
         }
     }
-    description("This organisation folder contains all repositories in the ${githubRepoOwner} organisation on github :wink:\n\nDepending on the access provided by the credentials \'github-credentials\', you\'ll see only the public repositories - or all.")
+    description("This organisation folder contains all public repositories in the ${githubRepoOwner} organisation on github :wink:\n\nFor access to private repositories, provide credentials \'github-credentials\', e.g. a user name and [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).\n\nGitHub invalidates a PAT as soon as I publish it in this repo, so I cannot showcase the mechanism in its totality.")
     organizations {
         github {
             apiUri('https://api.github.com')
