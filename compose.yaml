@@ -34,6 +34,8 @@ services:
       - SSH_AGENT_PRIVATE_KEY
     ports:
       - "50000:50000"
+    expose:
+      - "8080:8080"
     deploy:
       restart_policy:
         condition: unless-stopped
