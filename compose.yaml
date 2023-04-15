@@ -51,7 +51,7 @@ services:
       - type: bind
         source: ./reverse-proxy/conf.d
         target: /etc/nginx/conf.d
-        read_only: true
+        read_only: false
       - type: bind
         source: ./reverse-proxy/certs/wildcard.test.local.crt
         target: /etc/ssl/certs/wildcard.test.local.crt
@@ -59,6 +59,14 @@ services:
       - type: bind
         source: ./reverse-proxy/certs/wildcard.test.local.key
         target: /etc/ssl/private/wildcard.test.local.key
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.mshome.net.crt
+        target: /etc/ssl/certs/wildcard.mshome.net.crt
+        read_only: true
+      - type: bind
+        source: ./reverse-proxy/certs/wildcard.mshome.net.key
+        target: /etc/ssl/private/wildcard.mshome.net.key
         read_only: true
     deploy:
       restart_policy:
