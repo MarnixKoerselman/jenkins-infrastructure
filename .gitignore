@@ -1,6 +1,10 @@
 secrets/
 .env
 compose.override.yaml
-windows-agent/swarm-client.jar
-windows-agent/remoting/
-windows-agent/workspace/
+swarm-client.jar
+remoting/
+workspace/
+jenkins-agent.err.log
+jenkins-agent.exe
+jenkins-agent.out.log
+jenkins-agent.wrapper.log
