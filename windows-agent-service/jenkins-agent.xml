@@ -1,0 +1,23 @@
+<!--
+ This is an example of a minimal Windows Service Wrapper configuration, which includes only mandatory options.
+
+ This configuration file should be placed near the WinSW executable, the name should be the same.
+ E.g. for myapp.exe the configuration file name should be myapp.xml
+
+ You can find more information about the configuration options here: https://github.com/kohsuke/winsw/blob/master/doc/xmlConfigFile.md
+ Full example: https://github.com/kohsuke/winsw/blob/master/examples/sample-allOptions.xml
+-->
+<service>
+    <id>jenkins-agent</id>
+    <name>Jenkins Agent Service (powered by WinSW)</name>
+    <description>Runs a Jenkins Agent as Windows Service (typically under the Local System account)</description>
+    <startmode>Automatic</startmode>
+    <executable>java.exe</executable>
+    <arguments>-Xrs -jar %BASE%\swarm-client.jar -executors 1 -url http://jenkins.mshome.net -name windows-swarm-agent -username swarm-user -password swarm-password -executors 1 -labels "windows x64 docker" -fsroot c:\jenkins</arguments>
+    <download from="http://jenkins.mshome.net/swarm/swarm-client.jar" to="%BASE%\swarm-client.jar" failOnError="true"/>
+    <log mode="roll-by-size">
+        <sizeThreshold>1024</sizeThreshold>
+        <keepFiles>8</keepFiles>
+    </log>
+    <onfailure action="restart">
+</service>

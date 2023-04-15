@@ -1,28 +1,33 @@
 pipeline {
-    agent none
+    agent {
+        node 'linux && docker'
+    }
+    tools {
+        dockerTool 'docker@latest'
+    }
     stages {
         stage('busybox') {
             agent {
                 docker {
-                    image 'busybox:stable'
-                    args '-p 3000:3000 -p 5000:5000'
+                    image 'alpine'
                     label 'linux && docker'
+                    reuseNode true
                 }
             }
             steps {
                 sh 'ls -al'
             }
         }
-        stage('nanoserver') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/windows/nanoserver:ltsc2019'
-                    label 'windows && docker'
-                }
-            }
-            steps {
-                bat 'dir'
-            }
-        }
+        // stage('nanoserver') {
+        //     agent {
+        //         docker {
+        //             image 'mcr.microsoft.com/windows/nanoserver:ltsc2019'
+        //             label 'windows && docker'
+        //         }
+        //     }
+        //     steps {
+        //         bat 'dir'
+        //     }
+        // }
     }
 }

@@ -1,3 +1,3 @@
 # jenkins-infrastructure
 
-based on: <https://code-maze.com/ci-jenkins-docker/>
+Inspired by: <https://code-maze.com/ci-jenkins-docker/>
