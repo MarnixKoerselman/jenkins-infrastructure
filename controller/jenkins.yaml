@@ -5,7 +5,7 @@ jenkins:
   disableRememberMe: false
   systemMessage: |
     # Jenkins configured using Jenkins Configuration as Code
-    See <https://jenkins.test.local/manage/configuration-as-code/>
+    See the [Configuration as Code page](/manage/configuration-as-code/).
   markupFormatter: "markdownFormatter"
   securityRealm:
     local:
