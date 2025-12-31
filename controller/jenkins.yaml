@@ -3,6 +3,8 @@ jenkins:
     standard:
       excludeClientIPFromCrumb: true
   disableRememberMe: false
+  # port needed for swarm clients
+  slaveAgentPort: 50000
   systemMessage: |
     # Jenkins configured using Jenkins Configuration as Code
     See the [Configuration as Code page](/manage/configuration-as-code/).
@@ -18,17 +20,24 @@ jenkins:
           password: "${JENKINS_SWARM_PASSWORD:-swarm}"
   authorizationStrategy:
     globalMatrix:
-      permissions:
-        - "USER:Agent/Connect:${JENKINS_SWARM_USER}"
-        - "USER:Agent/Disconnect:${JENKINS_SWARM_USER}"
-        - "USER:Agent/Create:${JENKINS_SWARM_USER}"
-        # - "USER:Agent/Delete:anonymous"
-        # - "USER:Overall/Read:anonymous"     # needed for anonymously connecting a swarm agent
-        - "GROUP:Overall/Administer:authenticated"
-        - "USER:Overall/Administer:${JENKINS_ADMINISTRATOR_USERNAME}"
+      entries:
+        - group:
+            name: "authenticated"
+            permissions:
+              - "Overall/Administer"
+        - user:
+            name: "${JENKINS_ADMINISTRATOR_USERNAME:-admin}"
+            permissions:
+              - "Overall/Administer"
+        - user:
+            name: "${JENKINS_SWARM_USER}"
+            permissions:
+              - "Agent/Connect"
+              - "Agent/Disconnect"
+              - "Agent/Create"
   nodes:
     - permanent:
-        labelString: "linux"
+        labelString: "linux docker.sock"
         launcher:
           ssh:
             credentialsId: "ssh-agent-key"
@@ -40,8 +49,13 @@ jenkins:
         name: "ssh-agent"
         remoteFS: "/home/jenkins/agent"
         retentionStrategy: "always"
-  labelString: "linux docker"
-  numExecutors: 1
+    - permanent:
+        labelString: "inbound windows ws2022"
+        launcher: "inbound"
+        name: "ws2022-inbound-agent"
+        remoteFS: "c:\\jenkins"
+        retentionStrategy: "always"
+  numExecutors: 0
 
 security:
   apiToken:
@@ -72,6 +86,7 @@ tool:
     installations:
       - name: "docker@latest"
         # Works only on Linux, unfortunately!
+        # unmaintained? Docker version 17.05.0-ce, build 89658be
         properties:
           - installSource:
               installers:
@@ -87,11 +102,11 @@ tool:
                 - zip:
                     label: "windows && x64"
                     subdir: "cmd\\git.exe"
-                    url: "https://github.com/git-for-windows/git/releases/download/v2.40.0.windows.1/MinGit-2.40.0-64-bit.zip"
+                    url: "https://github.com/git-for-windows/git/releases/download/v2.52.0.windows.1/MinGit-2.52.0-64-bit.zip"
                 - zip:
                     label: "windows && x86"
                     subdir: "cmd\\git.exe"
-                    url: "https://github.com/git-for-windows/git/releases/download/v2.40.0.windows.1/MinGit-2.40.0-32-bit.zip"
+                    url: "https://github.com/git-for-windows/git/releases/download/v2.52.0.windows.1/MinGit-2.52.0-32-bit.zip"
 
 jobs:
   - file: /usr/share/jenkins/dsl/jenkinsfiles.groovy
@@ -111,7 +126,7 @@ credentials:
               # description: "ssh key used to connect ssh agents"
               privateKeySource:
                 directEntry:
-                  privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in compose.yml
+                  privateKey: ${SSH_AGENT_PRIVATE_KEY} # secret defined in docker-compose.yml
           # - usernamePassword:
           #     id: "github-credentials"
           #     password: "${GITHUB_PAT}"

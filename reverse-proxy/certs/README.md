@@ -10,6 +10,10 @@ passphrase: 1234567890
 
 ```openssl req -x509 -new -nodes -key myCA.key -sha256 -days 20000 -out myCA.cer```
 
+### Trust the CA, in Windows
+
+Start > Search: Manage Computer Certificates
+
 ## Website
 
 ```openssl genrsa -out wildcard.test.local.key 2048```

@@ -6,17 +6,37 @@ RUN mkdir /var/cache/jenkins
 RUN chown -R jenkins:jenkins /var/cache/jenkins
 ENV JENKINS_OPTS="--webroot=/var/cache/jenkins/war"
 # Install docker
-RUN apt-get -y update && \
-    apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo \"$ID\") $(lsb_release -cs) stable" && \
-    apt-get update && \
-    apt-get -y install docker-ce docker-ce-cli containerd.io
-RUN
+RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+    https://download.docker.com/linux/debian $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && apt-get install -y docker-ce-cli && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # RUN curl -L "https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
 #  chmod +x /usr/local/bin/docker-compose && \
 #  ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 # USER jenkins <= won't work with permissions on docker.sock
 
-RUN jenkins-plugin-cli --plugins credentials-binding configuration-as-code job-dsl authorize-project markdown-formatter swarm docker-workflow ws-cleanup pipeline-stage-view pipeline-graph-view pipeline-utility-steps matrix-auth ssh-slaves github github-branch-source warnings-ng junit
+RUN jenkins-plugin-cli --plugins \
+    authorize-project \
+    configuration-as-code \
+    credentials-binding \
+    docker-workflow \
+    github \
+    github-branch-source \
+    job-dsl \
+    junit \
+    markdown-formatter \
+    matrix-auth \
+    pipeline-graph-view \
+    pipeline-stage-view \
+    pipeline-utility-steps \
+    ssh-slaves \
+    swarm \
+    warnings-ng \
+    ws-cleanup
 # blueocean git workflow-aggregator antisamy-markup-formatter

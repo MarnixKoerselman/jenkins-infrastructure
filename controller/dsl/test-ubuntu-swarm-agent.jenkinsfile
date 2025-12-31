@@ -1,21 +1,24 @@
 pipeline {
     agent {
-        node 'linux && docker'
+        node 'swarm && ubuntu-22.04 && linux && docker.sock'
     }
     tools {
         dockerTool 'docker@latest'
     }
     stages {
-        stage('busybox') {
-            agent {
-                docker {
-                    image 'alpine'
-                    label 'linux && docker'
-                    reuseNode true
-                }
-            }
+        stage('installed') {
             steps {
                 sh 'ls -al'
+                sh 'git --version || true'
+                sh 'apt list --installed'
+                sh 'apt update && apt install -y git'
+            }
+        }
+        stage('dockertool') {
+            steps {
+                sh 'docker --version'
+                sh 'docker info'
+                sh 'docker run --rm busybox ls -al'
             }
         }
         // stage('nanoserver') {

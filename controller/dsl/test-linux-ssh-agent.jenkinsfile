@@ -1,0 +1,13 @@
+pipeline {
+    agent {
+        node 'ssh-agent'
+    }
+    stages {
+        stage('test') {
+            steps {
+                sh 'ls -al'
+                sh 'git --version'
+            }
+        }
+    }
+}

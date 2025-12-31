@@ -1,5 +1,3 @@
-# version: '3.9'
-
 name: jenkins
 services:
   controller:
@@ -21,7 +19,7 @@ services:
     environment:
       CASC_JENKINS_CONFIG: /var/jenkins/casc/jenkins.yaml
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
-      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.test.local} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
+      JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.mshome.net} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
       TZ: Europe/CET
     configs:
       - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use just the jenkins base image
@@ -33,9 +31,10 @@ services:
       - JENKINS_SWARM_PASSWORD
       - SSH_AGENT_PRIVATE_KEY
     ports:
+      - "8080:8080" # inbound agents that don't trust the myCA certificate
       - "50000:50000"
     expose:
-      - "8080:8080"
+      - "8080"
     deploy:
       restart_policy:
         condition: unless-stopped
@@ -74,7 +73,7 @@ services:
         delay: 5s
         window: 120s
 
-  test: # 'dummy' website to test the nginx configuration for multiple websites
+  test: # 'dummy' website to test the nginx configuration for multiple websites; remove the nginx config if this service should be removed
     image: nginx:stable
     deploy:
       mode: global
@@ -94,12 +93,13 @@ services:
     volumes:
       - type: bind
         # potential docker machine
+        # NB: `agent { docker { ... } }` does not work on wsl
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
 
-  swarm-agent:
-    hostname: swarm-agent
+  ubuntu-swarm-agent:
+    hostname: ubuntu-swarm-agent
     image: jenkins-swarm-agent
     build:
       context: swarm-agent
@@ -118,9 +118,35 @@ services:
     volumes:
       - type: bind
         # potential docker machine
+        # NB: `agent { docker { ... } }` does not work on wsl
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+
+  dind-agent:
+    # NB: `agent { docker { ... } }` does not work on wsl
+    hostname: dind-agent
+    image: jenkins-dind-agent
+    build:
+      context: dind-agent
+      dockerfile: Dockerfile
+    privileged: true
+    environment:
+      - JENKINS_URL=http://controller:8080
+      - DOCKER_TLS_CERTDIR=/certs
+    secrets:
+      - JENKINS_SWARM_USER
+      - JENKINS_SWARM_PASSWORD
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 120s
 
 volumes:
   controller_home:

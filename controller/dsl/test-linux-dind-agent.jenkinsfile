@@ -1,0 +1,17 @@
+pipeline {
+    agent {
+        node 'linux && dind'
+    }
+    stages {
+        stage('busybox') {
+            // NB: `agent { docker { ... } }` does not work on wsl
+            steps {
+                sh 'ls -al'
+                sh 'docker --version'
+                sh 'docker info'
+                sh 'docker run --rm busybox echo "Hello from BusyBox!"'
+                sh 'git --version'
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+pipeline {
+    agent {
+        node 'swarm && ws2022 && docker-engine'
+    }
+    stages {
+        stage('host') {
+            steps {
+                bat 'set'
+            }
+        }
+        stage('nanoserver') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/windows/nanoserver:ltsc2022'
+                    reuseNode true
+                }
+            }
+            steps {
+                bat 'set'
+            }
+        }
+    }
+}

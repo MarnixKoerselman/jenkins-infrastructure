@@ -1,0 +1,12 @@
+pipeline {
+    agent {
+        node 'ws2022-inbound-agent'
+    }
+    stages {
+        stage('host') {
+            steps {
+                bat 'set'
+            }
+        }
+    }
+}

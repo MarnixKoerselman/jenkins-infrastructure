@@ -13,7 +13,7 @@
     <description>Runs a Jenkins Agent as Windows Service (typically under the Local System account)</description>
     <startmode>Automatic</startmode>
     <executable>java.exe</executable>
-    <arguments>-Xrs -jar %BASE%\swarm-client.jar -executors 1 -url http://jenkins.mshome.net -name windows-swarm-agent -username swarm-user -password swarm-password -executors 1 -labels "windows x64 docker" -fsroot c:\jenkins</arguments>
+    <arguments>-Xrs -jar %BASE%\swarm-client.jar -executors 1 -url http://jenkins.mshome.net -name windows-swarm-agent -username swarm-user -password swarm-password -executors 1 -labels "docker-engine windows x64" -fsroot c:\jenkins</arguments>
     <download from="http://jenkins.mshome.net/swarm/swarm-client.jar" to="%BASE%\swarm-client.jar" failOnError="true"/>
     <log mode="roll-by-size">
         <sizeThreshold>1024</sizeThreshold>
