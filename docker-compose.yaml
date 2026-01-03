@@ -21,6 +21,8 @@ services:
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
       JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.mshome.net} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
       TZ: Europe/CET
+    env_file:
+      - .env # this is not secure, but as long as the secrets don't leak outside my lab...
     configs:
       - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use just the jenkins base image
         target: /var/jenkins/casc/jenkins.yaml

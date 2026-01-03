@@ -1,12 +1,11 @@
 String githubRepoOwner = 'MarnixKoerselman' // take care that the variable name doesn't clash with a JobDSL reserved name
 organizationFolder(githubRepoOwner) {
     configure { node ->
-        // Set child scan triggers to 60 minutes (`Jenkins-Imposed API Limiter: Current quota for Github API usage has 11 remaining (4 over budget). Next quota of 60 in 49 min. Sleeping until reset.`)
         node / 'properties' << 'jenkins.branch.OrganizationChildTriggersProperty' {
             templates {
                 'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger' {
-                    spec('H * * * *')
-                    interval('900000')
+                    spec('@hourly') // required but not used?
+                    interval('600000')
                 }
             }
         }
