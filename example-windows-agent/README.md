@@ -36,3 +36,10 @@ Scripted download example:
 ```powershell
 Start-BitsTransfer -Source "https://aka.ms/download-jdk/microsoft-jdk-21-windows-x64.msi" -Destination java.msi
 ```
+
+Install myCA.cer in the keystore:
+
+```powershell
+Set-Location "C:\Program Files\Microsoft\jdk-21.0.9.10-hotspot\lib\security"
+keytool -import -trustcacerts -keystore cacerts -storepass changeit -noprompt -alias myCA -file C:\jenkins\myCA.cer
+```

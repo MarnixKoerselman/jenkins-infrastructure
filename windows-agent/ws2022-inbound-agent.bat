@@ -1,1 +1,0 @@
-docker run -v "%cd%:%cd%" --rm jenkins/inbound-agent:windowsservercore-ltsc2022 -name "ws2022-inbound-agent" -secret 2053918a8c9fc28ea1420ed127c10b5ddf88e3cc1b9290a9a35f0916975c9d0b -url http://192.168.1.191:8080 -webSocket -workDir "%cd%"

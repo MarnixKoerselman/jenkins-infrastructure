@@ -3,4 +3,4 @@ services:
   agent:
     build: .
     environment:
-      - JENKINS_CONTROLLER_NAME=jenkins.mshome.net
+      - JENKINS_URL=https://jenkins.mshome.net
