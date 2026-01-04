@@ -37,7 +37,7 @@ jenkins:
               - "Agent/Create"
   nodes:
     - permanent:
-        labelString: "linux docker.sock"
+        labelString: "linux alpine"
         launcher:
           ssh:
             credentialsId: "ssh-agent-key"
@@ -82,16 +82,6 @@ unclassified:
     url: "${JENKINS_URL_CASC}"
 
 tool:
-  dockerTool:
-    installations:
-      - name: "docker@latest"
-        # Works only on Linux, unfortunately!
-        # unmaintained? Docker version 17.05.0-ce, build 89658be
-        properties:
-          - installSource:
-              installers:
-                - fromDocker:
-                    version: "latest"
   git:
     installations:
       - home: "git"

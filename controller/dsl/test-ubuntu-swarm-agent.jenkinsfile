@@ -1,36 +1,32 @@
 pipeline {
     agent {
-        node 'swarm && ubuntu-22.04 && linux && docker.sock'
-    }
-    tools {
-        dockerTool 'docker@latest'
+        node 'swarm && ubuntu-24.04 && linux && docker-engine'
     }
     stages {
-        stage('installed') {
+        stage('docker-run') {
             steps {
                 sh 'ls -al'
-                sh 'git --version || true'
-                sh 'apt list --installed'
-                sh 'apt update && apt install -y git'
-            }
-        }
-        stage('dockertool') {
-            steps {
                 sh 'docker --version'
                 sh 'docker info'
-                sh 'docker run --rm busybox ls -al'
+                sh 'docker run --rm busybox echo "Hello from BusyBox!"'
+                sh 'git --version'
             }
         }
-        // stage('nanoserver') {
-        //     agent {
-        //         docker {
-        //             image 'mcr.microsoft.com/windows/nanoserver:ltsc2019'
-        //             label 'windows && docker'
-        //         }
-        //     }
-        //     steps {
-        //         bat 'dir'
-        //     }
-        // }
+        stage('docker-agent') {
+            agent {
+                docker {
+                    image 'busybox:latest'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'touch test-file && ls -al'
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
     }
 }

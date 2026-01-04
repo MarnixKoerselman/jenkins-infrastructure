@@ -3,8 +3,7 @@ pipeline {
         node 'linux && dind'
     }
     stages {
-        stage('busybox') {
-            // NB: `agent { docker { ... } }` does not work on wsl
+        stage('docker-run') {
             steps {
                 sh 'ls -al'
                 sh 'docker --version'
@@ -12,6 +11,22 @@ pipeline {
                 sh 'docker run --rm busybox echo "Hello from BusyBox!"'
                 sh 'git --version'
             }
+        }
+        stage('docker-agent') {
+            agent {
+                docker {
+                    image 'busybox:latest'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'touch test-file && ls -al'
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }

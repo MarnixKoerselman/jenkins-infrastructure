@@ -22,7 +22,7 @@ services:
       JENKINS_URL_CASC: ${JENKINS_URL_CASC:-https://jenkins.mshome.net} # specify JENKINS_URL_CASC on the deployment host, or in an '.env' file which stays out of git
       TZ: Europe/CET
     env_file:
-      - .env # this is not secure, but as long as the secrets don't leak outside my lab...
+      - .env # this is not secure, but as long as the github secrets don't leak outside my lab...
     configs:
       - source: casc # convenient for development: change jenkins.yaml on-the-fly, without need to rebuild the docker image; also useful to use just the jenkins base image
         target: /var/jenkins/casc/jenkins.yaml
@@ -85,20 +85,13 @@ services:
         window: 120s
 
   ssh-agent:
-    image: jenkins/ssh-agent
+    image: jenkins/ssh-agent:latest-alpine-jdk21 # https://hub.docker.com/r/jenkins/ssh-agent - https://github.com/jenkinsci/docker-ssh-agent
     env_file: example-secrets/ssh-agent.env
     deploy:
       restart_policy:
         condition: unless-stopped
         delay: 5s
         window: 120s
-    volumes:
-      - type: bind
-        # potential docker machine
-        # NB: `agent { docker { ... } }` does not work on wsl
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
 
   ubuntu-swarm-agent:
     hostname: ubuntu-swarm-agent
@@ -117,22 +110,19 @@ services:
         condition: unless-stopped
         delay: 5s
         window: 120s
+    privileged: true
     volumes:
       - type: bind
-        # potential docker machine
-        # NB: `agent { docker { ... } }` does not work on wsl
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
 
   dind-agent:
-    # NB: `agent { docker { ... } }` does not work on wsl
     hostname: dind-agent
     image: jenkins-dind-agent
     build:
       context: dind-agent
       dockerfile: Dockerfile
-    privileged: true
     environment:
       - JENKINS_URL=http://controller:8080
       - DOCKER_TLS_CERTDIR=/certs

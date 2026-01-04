@@ -10,8 +10,19 @@ JENKINS_SWARM_PASSWORD=$(cat /run/secrets/JENKINS_SWARM_PASSWORD)
 
 while true
 do
-wget $JENKINS_URL/swarm/swarm-client.jar -O /swarm-client.jar
-java -jar /swarm-client.jar -executors 1 -url $JENKINS_URL -username $JENKINS_SWARM_USER -password $JENKINS_SWARM_PASSWORD -executors 1 -labels "docker.sock linux ubuntu-22.04" -description "based on ubuntu:22.04"
+wget $JENKINS_URL/swarm/swarm-client.jar -O swarm-client.jar
+# see https://plugins.jenkins.io/swarm/
+java -jar swarm-client.jar \
+  -description "based on ubuntu:24.04" \
+  -executors 1 \
+  -fsroot $PWD \
+  -labels "docker-engine linux ubuntu-24.04" \
+  -mode exclusive \
+  -password $JENKINS_SWARM_PASSWORD \
+  -retryBackOffStrategy exponential \
+  -url $JENKINS_URL \
+  -username $JENKINS_SWARM_USER \
+  -webSocket
 echo "sleep and retry, swarm-client exit code: $?"
 sleep 10
 done
