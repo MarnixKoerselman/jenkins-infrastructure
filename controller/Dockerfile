@@ -40,5 +40,6 @@ RUN jenkins-plugin-cli --plugins \
     ssh-slaves \
     swarm \
     warnings-ng \
-    ws-cleanup
+    ws-cleanup \
+    htmlpublisher
 # blueocean git workflow-aggregator antisamy-markup-formatter
